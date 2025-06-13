@@ -5,7 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { find, isEmpty, omit } from 'lodash';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Show } from '../components/renderer';
+import { Show } from '../ui/renderer';
 import FontProvider from './Font';
 import QueryProvider from './Query';
 import { ThemeProvider } from './Theme';
