@@ -26,8 +26,8 @@ const withInputField = (Component: TGluestackUI['input']['InputField']) => {
         Component,
         {
           onSubmitEditing: nextField,
-          value: field.value,
-          onChangeText: helpers.setValue,
+          value: field?.value,
+          onChangeText: helpers?.setValue,
           ...restProps,
           ref: setRef(ref),
         },
