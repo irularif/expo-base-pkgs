@@ -41,14 +41,14 @@ export const withCustomComponents = <T extends ComponentType<any>>(
 
 export const groupWithComponentImport = <
   T extends TComponentPathString,
-  M extends TGluestackUI[T],
+  M extends Record<string, ComponentType<any>>,
 >(
   namespace: T,
   moduleImports: M
 ): M => {
   const result = {} as M;
 
-  (Object.keys(moduleImports) as Array<keyof M>).forEach((name) => {
+  (Object.keys(moduleImports) as (keyof M)[]).forEach((name) => {
     if (!name || /^[a-z]/.test(name as string)) return; // Skip hooks or utility functions
     const component = moduleImports[name];
     (result as any)[name] = withCustomComponents(

@@ -1,40 +1,31 @@
-import {
-  ComponentProps,
-  createElement,
-  ForwardedRef,
-  forwardRef,
-  useContext,
-} from 'react';
+import { ComponentProps, createElement, useContext } from 'react';
 import { FormControlContext } from '../../context/form';
-import * as components from '../../vendor/gluestack-ui/input';
 import { groupWithComponentImport } from '../../hoc/customCmponent';
 import { useField, useRegisterInputRef } from '../../hooks/useForm';
 import { TGluestackUI } from '../../types/gluestack-ui';
+import * as components from '../../vendor/gluestack-ui/input';
 
 const withInputField = (Component: TGluestackUI['input']['InputField']) => {
-  const WithInputField = forwardRef(
-    (
-      props: ComponentProps<TGluestackUI['input']['InputField']>,
-      ref: ForwardedRef<any>
-    ) => {
-      const { children, ...restProps } = props;
-      const name = useContext(FormControlContext) ?? '';
-      const { setRef, nextField } = useRegisterInputRef(name);
-      const { field, helpers } = useField(name);
+  const WithInputField = (
+    props: ComponentProps<TGluestackUI['input']['InputField']>
+  ) => {
+    const { children, ref, ...restProps } = props;
+    const name = useContext(FormControlContext) ?? '';
+    const { setRef, nextField } = useRegisterInputRef(name);
+    const { field, helpers } = useField(name);
 
-      return createElement(
-        Component,
-        {
-          onSubmitEditing: nextField,
-          value: field?.value,
-          onChangeText: helpers?.setValue,
-          ...restProps,
-          ref: setRef(ref),
-        },
-        children
-      );
-    }
-  );
+    return createElement(
+      Component,
+      {
+        onSubmitEditing: nextField,
+        value: field?.value,
+        onChangeText: helpers?.setValue,
+        ...restProps,
+        ref: setRef(ref),
+      },
+      children
+    );
+  };
 
   WithInputField.displayName = `WithInputField(${Component.displayName || Component.name || 'InputField'})`;
 

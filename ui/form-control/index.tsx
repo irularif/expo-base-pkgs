@@ -1,24 +1,15 @@
-import {
-  ComponentProps,
-  createElement,
-  forwardRef,
-  useContext,
-  ElementRef,
-} from 'react';
+import { ComponentProps, createElement, useContext } from 'react';
 import { FormControlContext } from '../../context/form';
-import * as components from '../../vendor/gluestack-ui/form-control';
 import { groupWithComponentImport } from '../../hoc/customCmponent';
 import { useField } from '../../hooks/useForm';
 import { FormControlProps } from '../../types/components';
 import { TGluestackUI } from '../../types/gluestack-ui';
+import * as components from '../../vendor/gluestack-ui/form-control';
 
 const withFormControl = (
   Component: TGluestackUI['formControl']['FormControl']
 ) => {
-  const FormControlComponent = forwardRef<
-    ElementRef<TGluestackUI['formControl']['FormControl']>,
-    FormControlProps
-  >((props, ref) => {
+  const FormControlComponent = (props: FormControlProps) => {
     const { name, ...rest } = props;
     const { meta } = useField(name ?? '');
 
@@ -27,11 +18,10 @@ const withFormControl = (
         {createElement(Component, {
           isInvalid: !!meta?.error,
           ...rest,
-          ref,
         })}
       </FormControlContext.Provider>
     );
-  });
+  };
 
   FormControlComponent.displayName = 'FormControl';
   return FormControlComponent;
@@ -40,19 +30,17 @@ const withFormControl = (
 const withFormControlLabel = (
   Component: TGluestackUI['formControl']['FormControlLabelText']
 ) => {
-  const FormControlLabelComponent = forwardRef<
-    ElementRef<TGluestackUI['formControl']['FormControlLabelText']>,
-    ComponentProps<TGluestackUI['formControl']['FormControlLabelText']>
-  >((props, ref) => {
+  const FormControlLabelComponent = (
+    props: ComponentProps<TGluestackUI['formControl']['FormControlLabelText']>
+  ) => {
     const name = useContext(FormControlContext) ?? '';
     const { handleFocus } = useField(name);
 
     return createElement(Component, {
       onPress: handleFocus,
       ...props,
-      ref,
     });
-  });
+  };
 
   FormControlLabelComponent.displayName = 'FormControlLabelText';
   return FormControlLabelComponent;
@@ -61,10 +49,9 @@ const withFormControlLabel = (
 const withFormControlErrorText = (
   Component: TGluestackUI['formControl']['FormControlErrorText']
 ) => {
-  const FormControlErrorTextComponent = forwardRef<
-    ElementRef<TGluestackUI['formControl']['FormControlErrorText']>,
-    ComponentProps<TGluestackUI['formControl']['FormControlErrorText']>
-  >((props, ref) => {
+  const FormControlErrorTextComponent = (
+    props: ComponentProps<TGluestackUI['formControl']['FormControlErrorText']>
+  ) => {
     const name = useContext(FormControlContext) ?? '';
     const { meta } = useField(name);
 
@@ -72,11 +59,10 @@ const withFormControlErrorText = (
       Component,
       {
         ...props,
-        ref,
       },
-      meta.error
+      meta?.error
     );
-  });
+  };
 
   FormControlErrorTextComponent.displayName = 'FormControlErrorText';
   return FormControlErrorTextComponent;
