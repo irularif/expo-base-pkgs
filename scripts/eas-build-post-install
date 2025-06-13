@@ -1,0 +1,40 @@
+#!/bin/bash
+# install-fonts script with platform detection
+
+# Check if EAS_PLATFORM is set
+if [ -z "$EAS_PLATFORM" ]; then
+    echo "EAS_PLATFORM is not set. Attempting to detect platform..."
+    
+    # Try to detect platform from command line arguments if script was called via eas build
+    if [[ "$@" == *"--platform ios"* ]]; then
+        PLATFORM="ios"
+    elif [[ "$@" == *"--platform android"* ]]; then
+        PLATFORM="android"
+    else
+        # Check for platform-specific files as fallback
+        if [ -d "ios" ]; then
+            PLATFORM="ios"
+        elif [ -d "android" ]; then
+            PLATFORM="android"
+        else
+            echo "Error: Could not determine platform. Please set EAS_PLATFORM manually."
+            exit 1
+        fi
+    fi
+    
+    echo "Detected platform: $PLATFORM"
+else
+    PLATFORM="$EAS_PLATFORM"
+    echo "Using EAS_PLATFORM: $PLATFORM"
+fi
+
+# Run platform-specific scripts
+if [ "$PLATFORM" = "android" ]; then 
+    echo "Running Android font installation..."
+    ./pkgs/scripts/install-fonts-android
+fi
+
+if [ "$PLATFORM" = "ios" ]; then
+    echo "Running iOS font installation..."
+    ./pkgs/scripts/install-fonts-ios
+fi

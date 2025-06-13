@@ -1,0 +1,11 @@
+#!/bin/bash
+# install-fonts-ios - fonts installation script
+
+set -e  # Exit on error
+
+echo "Starting font installation process..."
+
+echo "Linking ttf assets to iOS project"
+npx react-native-asset
+
+echo "Fonts installed successfully."

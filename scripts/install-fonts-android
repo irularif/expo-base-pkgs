@@ -1,0 +1,169 @@
+#!/bin/bash
+# install-fonts-android - fonts installation script
+
+set -e  # Exit on error
+
+# Define paths relative to project root
+FONTS_SOURCE_DIR="./app/assets/fonts"
+ANDROID_RES_DIR="./android/app/src/main/res"
+ANDROID_FONTS_DIR="${ANDROID_RES_DIR}/font"
+
+echo "Starting font installation process..."
+
+# Check if source directory exists
+if [ ! -d "${FONTS_SOURCE_DIR}" ]; then
+    echo "Error: Font source directory ${FONTS_SOURCE_DIR} not found."
+    exit 1
+fi
+
+# Check if Android fonts directory exists, and if so, remove it
+if [ -d "${ANDROID_FONTS_DIR}" ]; then
+    echo "Removing existing ${ANDROID_FONTS_DIR} directory..."
+    rm -rf "${ANDROID_FONTS_DIR}"
+fi
+
+# Create fonts directory if it doesn't exist
+mkdir -p "${ANDROID_FONTS_DIR}"
+echo "Created ${ANDROID_FONTS_DIR} directory"
+
+# Function to convert font name to Android-compatible name
+android_font_name() {
+    echo "$1" | tr '[:upper:]' '[:lower:]' | tr ' ' '_' | tr '-' '_' | sed 's/[^a-z0-9_]//g'
+}
+
+# Function to convert string to lowercase (compatible with older bash versions)
+to_lowercase() {
+    echo "$1" | tr '[:upper:]' '[:lower:]'
+}
+
+# Function to convert first character to uppercase (compatible with older bash versions)
+to_titlecase() {
+    local str="$1"
+    # Replace underscores with spaces
+    str="${str//_/ }"
+    # Capitalize each word
+    local result=""
+    for word in $str; do
+        local first_char=$(echo "${word:0:1}" | tr '[:lower:]' '[:upper:]')
+        local rest="${word:1}"
+        result="$result$first_char$rest "
+    done
+    # Remove trailing space and return
+    echo "${result% }"
+}
+
+# Process each subdirectory in the fonts directory
+font_families=""
+for font_dir in $(find "${FONTS_SOURCE_DIR}" -mindepth 1 -type d); do
+    # Get the font family name from directory name
+    font_family=$(basename "${font_dir}")
+    android_family=$(android_font_name "${font_family}")
+    
+    # Only process if directory contains font files
+    font_count=$(find "${font_dir}" -type f \( -name "*.ttf" -o -name "*.otf" \) | wc -l)
+    if [ $font_count -gt 0 ]; then
+        echo "Processing font family: ${font_family} (${android_family})"
+        
+        # Add to our list of font families
+        font_families="${font_families} ${android_family}"
+        
+        # Create XML font family file
+        cat > "${ANDROID_FONTS_DIR}/${android_family}.xml" << EOF
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:app="http://schemas.android.com/apk/res-auto">
+EOF
+        
+        # Process each font file in this directory
+        for font_file in $(find "${font_dir}" -type f \( -name "*.ttf" -o -name "*.otf" \)); do
+            font_filename=$(basename "${font_file}")
+            font_name="${font_filename%.*}"  # Remove extension
+            extension="${font_filename##*.}"
+            android_name=$(android_font_name "${font_name}")
+            
+            # Convert font name to lowercase for comparisons
+            font_name_lower=$(to_lowercase "${font_name}")
+            
+            # Copy and rename the font file
+            cp "${font_file}" "${ANDROID_FONTS_DIR}/${android_name}.${extension}"
+            echo "  - Copied: ${font_filename} -> ${android_name}.${extension}"
+            
+            # Determine font style based on filename
+            font_style="normal"
+            if [[ "${font_name_lower}" =~ italic ]]; then
+                font_style="italic"
+            fi
+            
+            # Determine font weight based on filename
+            font_weight="400" # default regular weight
+            if [[ "${font_name_lower}" =~ thin ]]; then
+                font_weight="100"
+            elif [[ "${font_name_lower}" =~ extralight ]]; then
+                font_weight="200"
+            elif [[ "${font_name_lower}" =~ light ]]; then
+                font_weight="300"
+            elif [[ "${font_name_lower}" =~ regular ]]; then
+                font_weight="400"
+            elif [[ "${font_name_lower}" =~ medium ]]; then
+                font_weight="500"
+            elif [[ "${font_name_lower}" =~ semibold ]] || [[ "${font_name_lower}" =~ semi_bold ]]; then
+                font_weight="600"
+            elif [[ "${font_name_lower}" =~ extrabold ]] || [[ "${font_name_lower}" =~ extra_bold ]]; then
+                font_weight="800"
+            elif [[ "${font_name_lower}" =~ bold ]]; then
+                font_weight="700"
+            elif [[ "${font_name_lower}" =~ black ]] || [[ "${font_name_lower}" =~ heavy ]]; then
+                font_weight="900"
+            fi
+            
+            # Add font to the family XML
+            echo "    <font app:fontStyle=\"${font_style}\" app:fontWeight=\"${font_weight}\" app:font=\"@font/${android_name}\" />" >> "${ANDROID_FONTS_DIR}/${android_family}.xml"
+        done
+        
+        # Close the XML file
+        echo "</font-family>" >> "${ANDROID_FONTS_DIR}/${android_family}.xml"
+        echo "  Created font family XML: ${android_family}.xml"
+    fi
+done
+
+# Find MainActivity.kt
+MAIN_ACTIVITY_PATH=$(find ./android/app/src/main -name "MainActivity.kt" -type f)
+
+if [ -z "${MAIN_ACTIVITY_PATH}" ]; then
+    echo "Error: MainActivity.kt not found. Font registration code was not added."
+    exit 1
+fi
+
+echo "Found MainActivity.kt at ${MAIN_ACTIVITY_PATH}"
+
+# Update MainActivity.kt
+# Add import if not already present
+if ! grep -q "import com.facebook.react.common.assets.ReactFontManager" "${MAIN_ACTIVITY_PATH}"; then
+    echo "Adding import for ReactFontManager"
+    
+    # Find the line number of the last import statement
+    LAST_IMPORT_LINE=$(grep -n "^import " "${MAIN_ACTIVITY_PATH}" | tail -1 | cut -d: -f1)
+    
+    # Add the import after the last import line
+    sed -i '' "${LAST_IMPORT_LINE}a\\
+import com.facebook.react.common.assets.ReactFontManager
+" "${MAIN_ACTIVITY_PATH}"
+    
+    echo "Added ReactFontManager import after line ${LAST_IMPORT_LINE}"
+fi
+
+# Add font registration to onCreate
+for family in $font_families; do
+    font_name_to_use=$(to_titlecase "${family}")
+    registration_code="ReactFontManager.getInstance().addCustomFont(this, \"${font_name_to_use}\", R.font.${family});"
+    
+    if ! grep -q "$registration_code" "${MAIN_ACTIVITY_PATH}"; then
+        echo "Adding registration for ${font_name_to_use}"
+        # Find the onCreate method and add our code after super.onCreate
+        sed -i '' "/super.onCreate/a\\
+        ${registration_code}" "${MAIN_ACTIVITY_PATH}"
+    else
+        echo "Registration for ${font_name_to_use} already exists"
+    fi
+done
+
+echo "Fonts installed successfully."
