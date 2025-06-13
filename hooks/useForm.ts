@@ -1,6 +1,4 @@
-import { FormContext } from '../context/form';
-import { IFieldRef, IFormContext } from '../types/form';
-import { FormikProps, FormikValues, useField as useFormikField } from 'formik';
+import { FormikProps, FormikValues, useFormikContext } from 'formik';
 import {
   ForwardedRef,
   RefObject,
@@ -10,6 +8,8 @@ import {
   useMemo,
   useRef,
 } from 'react';
+import { FormContext } from '../context/form';
+import { IFieldRef, IFormContext } from '../types/form';
 
 export const useFormContext = () => {
   const context = useContext<IFormContext | null>(FormContext);
@@ -85,8 +85,13 @@ export const useRegisterInputRef = (name: string) => {
 };
 
 export const useField = (name: string) => {
-  const [field, meta, helpers] = useFormikField(name);
   const form = useFormContext();
+  const formik = useFormikContext();
+
+  const helpers = useMemo(
+    () => formik?.getFieldHelpers?.(name),
+    [formik, name]
+  );
 
   const handleFocus = useCallback(() => {
     if (!form || !name) {
@@ -98,5 +103,10 @@ export const useField = (name: string) => {
     }
   }, [name, form]);
 
-  return { field, meta, helpers, handleFocus };
+  return {
+    field: formik?.getFieldProps({ name }),
+    meta: formik?.getFieldMeta(name),
+    helpers,
+    handleFocus,
+  };
 };
