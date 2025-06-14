@@ -6,7 +6,6 @@ import {
   TComponentPathString,
   TComponentPathStringExact,
 } from '../types/components';
-import { TGluestackUI } from '../types/gluestack-ui';
 
 export const withCustomComponents = <T extends ComponentType<any>>(
   Component: T,

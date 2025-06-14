@@ -1,4 +1,4 @@
-import { ComponentProps, createElement, useContext } from 'react';
+import { ComponentProps, createElement, useCallback, useContext } from 'react';
 import { FormControlContext } from '../../context/form';
 import { groupWithComponentImport } from '../../hoc/customCmponent';
 import { useField, useRegisterInputRef } from '../../hooks/useForm';
@@ -9,18 +9,27 @@ const withInputField = (Component: TGluestackUI['input']['InputField']) => {
   const WithInputField = (
     props: ComponentProps<TGluestackUI['input']['InputField']>
   ) => {
-    const { children, ref, ...restProps } = props;
+    const { children, ref, onChangeText, ...restProps } = props;
     const name = useContext(FormControlContext) ?? '';
     const { setRef, nextField } = useRegisterInputRef(name);
     const { field, helpers } = useField(name);
+
+    const _onChangeText = useCallback(
+      (text: any) => {
+        helpers?.setTouched(true);
+        helpers?.setValue(text);
+        onChangeText?.(text);
+      },
+      [helpers, onChangeText]
+    );
 
     return createElement(
       Component,
       {
         onSubmitEditing: nextField,
         value: field?.value,
-        onChangeText: helpers?.setValue,
         ...restProps,
+        onChangeText: _onChangeText,
         ref: setRef(ref),
       },
       children

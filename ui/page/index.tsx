@@ -1,22 +1,13 @@
-import { StatusBar, StatusBarStyle } from 'expo-status-bar';
-import { ReactNode } from 'react';
-import { Platform, ScrollViewProps } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { Platform } from 'react-native';
 import { twMerge } from 'tailwind-merge';
+import { withCustomComponents } from '../../hoc/customCmponent';
+import { PageProps } from '../../types/components';
 import { KeyboardAvoidingView } from '../keyboard-avoiding-view';
 import { ScrollView } from '../scroll-view';
 import { View } from '../view';
 
-interface IPage extends ScrollViewProps {
-  children: ReactNode;
-  className?: string;
-  contentClassName?: string;
-  rootClassName?: string;
-  barStyle?: StatusBarStyle;
-  header?: ReactNode;
-  disableScroll?: boolean;
-}
-
-const Page = (props: IPage) => {
+const BasicPage = (props: PageProps) => {
   const {
     children,
     className,
@@ -33,7 +24,7 @@ const Page = (props: IPage) => {
   return (
     <KeyboardAvoidingView
       behavior={behavior}
-      className={twMerge('flex-1 bg-background-page', rootClassName)}
+      className={twMerge('flex-1', rootClassName)}
     >
       <StatusBar style={barStyle} />
       {header}
@@ -52,5 +43,9 @@ const Page = (props: IPage) => {
     </KeyboardAvoidingView>
   );
 };
+
+BasicPage.displayName = 'Page';
+
+const Page = withCustomComponents(BasicPage, 'page.Page');
 
 export { Page };

@@ -1,6 +1,22 @@
 import { ComponentProps } from 'react';
 import { TGluestackUI } from './gluestack-ui';
 
+export interface PageProps extends ScrollViewProps {
+  children: ReactNode;
+  className?: string;
+  contentContainerClassName?: string;
+  rootClassName?: string;
+  barStyle?: StatusBarStyle;
+  header?: ReactNode;
+  disableScroll?: boolean;
+}
+
+type PkgsComponents = {
+  page: {
+    Page: PageProps;
+  };
+};
+
 type DeepPartial<T> = T extends object
   ? {
       [P in keyof T]?: DeepPartial<T[P]>;
@@ -26,7 +42,7 @@ export type TComponentsPath = {
 };
 
 // Add this new type for string paths
-export type TComponentPathString = keyof TGluestackUI;
+export type TComponentPathString = keyof TGluestackUI | keyof PkgsComponents;
 
 // For more specific typing with exact component names:
 export type TComponentPathStringExact = {
@@ -41,6 +57,8 @@ export type ButtonProps = ComponentProps<TGluestackUI['button']['Button']> & {
 };
 
 // Fix the FormControlProps to reference the correct type
-export type FormControlProps = ComponentProps<TGluestackUI['formControl']['FormControl']> & {
+export type FormControlProps = ComponentProps<
+  TGluestackUI['formControl']['FormControl']
+> & {
   name?: string;
 };

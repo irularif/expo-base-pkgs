@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { PrimitiveIcon, UIIcon } from '@gluestack-ui/icon';
 import { tva } from '@gluestack-ui/nativewind-utils/tva';
 import {
@@ -9,6 +9,7 @@ import {
 } from '@gluestack-ui/nativewind-utils/withStyleContext';
 import { cssInterop } from 'nativewind';
 import type { VariantProps } from '@gluestack-ui/nativewind-utils';
+import { Text } from '../text';
 const SCOPE = 'BADGE';
 
 const badgeStyle = tva({

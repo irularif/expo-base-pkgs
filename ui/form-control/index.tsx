@@ -16,7 +16,7 @@ const withFormControl = (
     return (
       <FormControlContext.Provider value={name}>
         {createElement(Component, {
-          isInvalid: !!meta?.error,
+          isInvalid: meta?.touched && !!meta?.error,
           ...rest,
         })}
       </FormControlContext.Provider>

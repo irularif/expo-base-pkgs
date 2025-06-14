@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { createCheckbox } from '@gluestack-ui/checkbox';
-import { View, Pressable, Text, Platform } from 'react-native';
+import { View, Pressable, Platform } from 'react-native';
 import type { TextProps, ViewProps } from 'react-native';
 import { tva } from '@gluestack-ui/nativewind-utils/tva';
 import { PrimitiveIcon, IPrimitiveIcon, UIIcon } from '@gluestack-ui/icon';
@@ -11,6 +11,7 @@ import {
 } from '@gluestack-ui/nativewind-utils/withStyleContext';
 import { cssInterop } from 'nativewind';
 import type { VariantProps } from '@gluestack-ui/nativewind-utils';
+import { Text } from '../text';
 
 const IndicatorWrapper = React.forwardRef<
   React.ElementRef<typeof View>,

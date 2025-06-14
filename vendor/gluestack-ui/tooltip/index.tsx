@@ -1,12 +1,13 @@
 'use client';
 import React from 'react';
 import { createTooltip } from '@gluestack-ui/tooltip';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import type { VariantProps } from '@gluestack-ui/nativewind-utils';
 import { tva } from '@gluestack-ui/nativewind-utils/tva';
 import { withStyleContext } from '@gluestack-ui/nativewind-utils/withStyleContext';
 import { Motion, AnimatePresence } from '@legendapp/motion';
 import { cssInterop } from 'nativewind';
+import { Text } from '../text';
 export const UITooltip = createTooltip({
   Root: withStyleContext(View),
   Content: Motion.View,

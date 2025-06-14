@@ -1,6 +1,6 @@
 'use client';
 import { createLink } from '@gluestack-ui/link';
-import { Pressable, Text } from 'react-native';
+import { Pressable } from 'react-native';
 
 import { tva } from '@gluestack-ui/nativewind-utils/tva';
 import { withStyleContext } from '@gluestack-ui/nativewind-utils/withStyleContext';
@@ -8,6 +8,7 @@ import { cssInterop } from 'nativewind';
 import type { VariantProps } from '@gluestack-ui/nativewind-utils';
 
 import React from 'react';
+import { Text } from '../text';
 export const UILink = createLink({
   Root: withStyleContext(Pressable),
   Text: Text,

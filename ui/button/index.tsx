@@ -32,11 +32,17 @@ export const withFormAction = (Component: TGluestackUI['button']['Button']) => {
 
     const children = useMemo(() => {
       const childArray = Children.toArray(_children as ReactNode);
-
       // Check if form is submitting and no spinner is already present
       if (
+        type === 'submit' &&
         form?.isSubmitting &&
-        !childArray.some((child) => child instanceof ButtonSpinner)
+        !childArray.some(
+          (child) =>
+            child &&
+            typeof child === 'object' &&
+            'type' in child &&
+            child.type === ButtonSpinner
+        )
       ) {
         // Create a new array with spinner at the beginning
         return [
@@ -46,11 +52,12 @@ export const withFormAction = (Component: TGluestackUI['button']['Button']) => {
       }
 
       return childArray;
-    }, [_children, form?.isSubmitting]);
+    }, [_children, form?.isSubmitting, type]);
 
     return createElement(
       Component,
       {
+        disabled: form?.isSubmitting,
         ...rest,
         onPress: handlePress,
       },

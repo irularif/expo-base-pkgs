@@ -2,7 +2,7 @@
 import React from 'react';
 import { createAvatar } from '@gluestack-ui/avatar';
 
-import { View, Text, Image, Platform } from 'react-native';
+import { View, Image, Platform } from 'react-native';
 
 import { tva } from '@gluestack-ui/nativewind-utils/tva';
 import {
@@ -10,6 +10,7 @@ import {
   useStyleContext,
 } from '@gluestack-ui/nativewind-utils/withStyleContext';
 import type { VariantProps } from '@gluestack-ui/nativewind-utils';
+import { Text } from '../text';
 const SCOPE = 'AVATAR';
 
 const UIAvatar = createAvatar({

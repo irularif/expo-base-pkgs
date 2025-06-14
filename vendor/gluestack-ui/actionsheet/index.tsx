@@ -5,7 +5,6 @@ import { createActionsheet } from '@gluestack-ui/actionsheet';
 import {
   Pressable,
   View,
-  Text,
   ScrollView,
   VirtualizedList,
   FlatList,
@@ -21,6 +20,7 @@ import {
   AnimatePresence,
   createMotionAnimatedComponent,
 } from '@legendapp/motion';
+import { Text } from '../text';
 
 const ItemWrapper = React.forwardRef<
   React.ElementRef<typeof Pressable>,
