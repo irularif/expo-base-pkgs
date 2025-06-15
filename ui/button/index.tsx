@@ -1,7 +1,9 @@
 import { useFormikContext } from 'formik';
 import {
   Children,
+  ComponentRef,
   createElement,
+  forwardRef,
   ReactNode,
   useCallback,
   useMemo,
@@ -14,7 +16,10 @@ import { TGluestackUI } from '../../types/gluestack-ui';
 import * as components from '../../vendor/gluestack-ui/button';
 
 export const withFormAction = (Component: TGluestackUI['button']['Button']) => {
-  const WithFormAction = (props: ButtonProps) => {
+  const WithFormAction = forwardRef<
+    ComponentRef<typeof Component>,
+    ButtonProps
+  >((props, ref) => {
     const { type, onPress, children: _children, ...rest } = props;
     const form = useFormikContext();
 
@@ -59,11 +64,12 @@ export const withFormAction = (Component: TGluestackUI['button']['Button']) => {
       {
         disabled: form?.isSubmitting,
         ...rest,
+        ref,
         onPress: handlePress,
       },
       children
     );
-  };
+  });
 
   const componentName = Component.displayName || Component.name || 'Button';
   WithFormAction.displayName = `withFormAction(${componentName})`;

@@ -1,4 +1,11 @@
-import { ComponentProps, createElement, useCallback, useContext } from 'react';
+import {
+  ComponentProps,
+  ComponentRef,
+  createElement,
+  forwardRef,
+  useCallback,
+  useContext,
+} from 'react';
 import { FormControlContext } from '../../context/form';
 import { groupWithComponentImport } from '../../hoc/customCmponent';
 import { useField, useRegisterInputRef } from '../../hooks/useForm';
@@ -6,10 +13,11 @@ import { TGluestackUI } from '../../types/gluestack-ui';
 import * as components from '../../vendor/gluestack-ui/input';
 
 const withInputField = (Component: TGluestackUI['input']['InputField']) => {
-  const WithInputField = (
-    props: ComponentProps<TGluestackUI['input']['InputField']>
-  ) => {
-    const { children, ref, onChangeText, ...restProps } = props;
+  const WithInputField = forwardRef<
+    ComponentRef<typeof Component>,
+    ComponentProps<typeof Component>
+  >((props: ComponentProps<TGluestackUI['input']['InputField']>, ref) => {
+    const { children, onChangeText, ...restProps } = props;
     const name = useContext(FormControlContext) ?? '';
     const { setRef, nextField } = useRegisterInputRef(name);
     const { field, helpers } = useField(name);
@@ -34,9 +42,10 @@ const withInputField = (Component: TGluestackUI['input']['InputField']) => {
       },
       children
     );
-  };
+  });
 
-  WithInputField.displayName = `WithInputField(${Component.displayName || Component.name || 'InputField'})`;
+  const componentName = Component.displayName || Component.name || 'InputField';
+  WithInputField.displayName = `withInputField(${componentName})`;
 
   return WithInputField;
 };

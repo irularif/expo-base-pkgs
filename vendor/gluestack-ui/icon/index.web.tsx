@@ -23,16 +23,17 @@ const iconStyle = tva({
 });
 
 export const Icon = React.forwardRef<
-  React.ElementRef<typeof UIIcon>,
+  React.ComponentRef<typeof UIIcon>,
   React.ComponentPropsWithoutRef<typeof UIIcon> &
     VariantProps<typeof iconStyle> & {
       height?: number | string;
       width?: number | string;
     }
->(({ size = 'md', className, ...props }, ref) => {
+>(function Icon({ size = 'md', className, ...props }, ref) {
   if (typeof size === 'number') {
     return (
       <UIIcon
+        // @ts-expect-error : TODO: fix this
         ref={ref}
         {...props}
         className={iconStyle({ class: className })}
@@ -45,6 +46,7 @@ export const Icon = React.forwardRef<
   ) {
     return (
       <UIIcon
+        // @ts-expect-error : TODO: fix this
         ref={ref}
         {...props}
         className={iconStyle({ class: className })}
@@ -53,14 +55,13 @@ export const Icon = React.forwardRef<
   }
   return (
     <UIIcon
+      // @ts-expect-error : TODO: fix this
       ref={ref}
       {...props}
       className={iconStyle({ size, class: className })}
     />
   );
 });
-
-Icon.displayName = 'Icon';
 
 type ParameterTypes = Omit<Parameters<typeof createIcon>[0], 'Root'>;
 
@@ -72,27 +73,28 @@ const accessClassName = (style: any) => {
 
 const createIconUI = ({ ...props }: ParameterTypes) => {
   const NewUIIcon = createIcon({ Root: Svg, ...props });
-  const ForwardedComponent = React.forwardRef<
-    React.ElementRef<typeof UIIcon>,
+  return React.forwardRef<
+    React.ComponentRef<typeof UIIcon>,
     React.ComponentPropsWithoutRef<typeof UIIcon> &
       VariantProps<typeof iconStyle> & {
         height?: number | string;
         width?: number | string;
       }
-  >(({ className, ...inComingprops }, ref) => {
+  >(function UIIcon({ className, ...inComingprops }, ref) {
     const calculateClassName = React.useMemo(() => {
       return className === undefined
         ? accessClassName(inComingprops?.style)
         : className;
     }, [className, inComingprops?.style]);
     return (
-      <NewUIIcon ref={ref} {...inComingprops} className={calculateClassName} />
+      <NewUIIcon
+        // @ts-expect-error : TODO: fix this
+        ref={ref}
+        {...inComingprops}
+        className={calculateClassName}
+      />
     );
   });
-
-  ForwardedComponent.displayName = 'CreatedIcon';
-
-  return ForwardedComponent;
 };
 
 export { createIconUI as createIcon };

@@ -1,5 +1,11 @@
 import { get, merge } from 'lodash';
-import { ComponentProps, ComponentType, createElement } from 'react';
+import {
+  ComponentProps,
+  ComponentRef,
+  ComponentType,
+  createElement,
+  forwardRef,
+} from 'react';
 import { twMerge } from 'tailwind-merge';
 import components from '../config/components';
 import {
@@ -7,35 +13,43 @@ import {
   TComponentPathStringExact,
 } from '../types/components';
 
+const regexPattern =
+  /^(?!.*SkeletonText.*)(.*Text.*|.*Heading.*|.*RadioLabel.*|.*CheckboxLabel.*|.*InputField.*|.*TextareaInput.*|.*ToastTitle.*|.*ToastDescription.*)$/;
+
 export const withCustomComponents = <T extends ComponentType<any>>(
   Component: T,
   path: TComponentPathStringExact
 ): T => {
-  const WithCustomComponent = (props: ComponentProps<T>) => {
-    const { children, ...restProps } = props;
-    const mergedProps = merge(
-      {},
-      get(components, path as string, {}),
-      restProps
-    );
-    return createElement(
-      Component,
-      {
-        ...mergedProps,
-        className: twMerge(
-          get(components, (path + '.className') as string, ''),
-          props?.className
-        ),
-      },
-      children
-    );
-  };
-
-  // Set display name for better debugging
   const componentName = Component.displayName || Component.name || 'Component';
-  WithCustomComponent.displayName = `WithCustomComponents(${componentName})`;
+  const isWhitelisted = regexPattern.test(componentName);
 
-  return WithCustomComponent as T;
+  const WithCustomComponent = forwardRef<ComponentRef<T>, ComponentProps<T>>(
+    (props, ref) => {
+      const { children, ...restProps } = props;
+      const mergedProps = merge(
+        {},
+        get(components, path as string, {}),
+        restProps
+      );
+      return createElement(
+        Component,
+        {
+          ...mergedProps,
+          ref,
+          className: twMerge(
+            isWhitelisted ? get(components, 'text.Text.className', '') : '',
+            get(components, (path + '.className') as string, ''),
+            props?.className
+          ),
+        },
+        children
+      );
+    }
+  );
+
+  WithCustomComponent.displayName = `withCustomComponents(${componentName})`;
+
+  return WithCustomComponent as unknown as T;
 };
 
 export const groupWithComponentImport = <

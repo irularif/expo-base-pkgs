@@ -1,10 +1,13 @@
 import * as components from '../../vendor/gluestack-ui/actionsheet';
 import { groupWithComponentImport } from '../../hoc/customCmponent';
 
+components.ActionsheetItemText.displayName = 'ActionsheetItemText';
+components.ActionsheetSectionHeaderText.displayName =
+  'ActionsheetSectionHeaderText';
+
 const customComponents = groupWithComponentImport('actionSheet', components);
 
 export const Actionsheet = customComponents.Actionsheet;
-export const ActionsheetTrigger = customComponents.ActionsheetTrigger;
 export const ActionsheetContent = customComponents.ActionsheetContent;
 export const ActionsheetItem = customComponents.ActionsheetItem;
 export const ActionsheetItemText = customComponents.ActionsheetItemText;
