@@ -15,6 +15,7 @@ const BasicPage = (props: PageProps) => {
     rootClassName,
     barStyle = 'auto',
     header,
+    footer,
     disableScroll = true,
     ...restProps
   } = props;
@@ -40,6 +41,7 @@ const BasicPage = (props: PageProps) => {
       >
         {children}
       </Component>
+      {footer}
     </KeyboardAvoidingView>
   );
 };

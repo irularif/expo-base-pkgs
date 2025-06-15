@@ -8,6 +8,7 @@ export interface PageProps extends ScrollViewProps {
   rootClassName?: string;
   barStyle?: StatusBarStyle;
   header?: ReactNode;
+  footer?: ReactNode;
   disableScroll?: boolean;
 }
 

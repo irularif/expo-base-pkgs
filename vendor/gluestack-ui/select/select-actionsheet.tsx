@@ -5,7 +5,6 @@ import { createActionsheet } from '@gluestack-ui/actionsheet';
 import {
   Pressable,
   View,
-  Text,
   ScrollView,
   VirtualizedList,
   FlatList,
@@ -23,6 +22,7 @@ import {
 } from '@legendapp/motion';
 
 import React from 'react';
+import { Text } from '../text';
 
 const AnimatedPressable = createMotionAnimatedComponent(Pressable);
 
