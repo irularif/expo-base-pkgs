@@ -1,0 +1,4 @@
+#!/bin/bash
+# install-fonts script with platform detection
+
+git submodule update --init
