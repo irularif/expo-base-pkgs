@@ -8,42 +8,36 @@ import {
 } from 'react';
 import { twMerge } from 'tailwind-merge';
 import components from '../config/components';
-import {
-  TComponentPathString,
-  TComponentPathStringExact,
-} from '../types/components';
+import { TComponentPathString } from '../types/components';
 
 const regexPattern =
   /^(?!.*SkeletonText.*)(.*Text.*|.*Heading.*|.*RadioLabel.*|.*CheckboxLabel.*|.*InputField.*|.*TextareaInput.*|.*ToastTitle.*|.*ToastDescription.*)$/;
 
 export const withCustomComponents = <T extends ComponentType<any>>(
   Component: T,
-  path: TComponentPathStringExact
+  path: TComponentPathString
 ): T => {
   const componentName = Component.displayName || Component.name || 'Component';
-  const isWhitelisted = regexPattern.test(componentName);
+  const isTextBasedComponent = regexPattern.test(componentName);
 
   const WithCustomComponent = forwardRef<ComponentRef<T>, ComponentProps<T>>(
     (props, ref) => {
       const { children, ...restProps } = props;
       const mergedProps = merge(
-        {},
+        restProps,
         get(components, path as string, {}),
-        restProps
-      );
-      return createElement(
-        Component,
         {
-          ...mergedProps,
           ref,
           className: twMerge(
-            isWhitelisted ? get(components, 'text.Text.className', '') : '',
+            isTextBasedComponent
+              ? get(components, 'text.Text.className', '')
+              : '',
             get(components, (path + '.className') as string, ''),
             props?.className
           ),
-        },
-        children
+        }
       );
+      return createElement(Component, mergedProps, children);
     }
   );
 
@@ -53,10 +47,8 @@ export const withCustomComponents = <T extends ComponentType<any>>(
 };
 
 export const groupWithComponentImport = <
-  T extends TComponentPathString,
   M extends Record<string, ComponentType<any>>,
 >(
-  namespace: T,
   moduleImports: M
 ): M => {
   const result = {} as M;
@@ -66,7 +58,7 @@ export const groupWithComponentImport = <
     const component = moduleImports[name];
     (result as any)[name] = withCustomComponents(
       component,
-      `${namespace}.${name as string}` as TComponentPathStringExact
+      `${name as string}` as TComponentPathString
     );
   });
 

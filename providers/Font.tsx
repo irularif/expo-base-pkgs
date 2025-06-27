@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 
 const FontProvider = ({ config = {} }: Partial<IAppProvider>) => {
   const { fonts = {} } = config;
-  const setAppStatus = useAppProviderState.setState;
   const [loaded, error] = useFonts({
     ...fonts,
   });
@@ -17,9 +16,9 @@ const FontProvider = ({ config = {} }: Partial<IAppProvider>) => {
 
   useEffect(() => {
     if (loaded) {
-      setAppStatus((v) => ({ ...v, isFontReady: true }));
+      useAppProviderState.setState((v) => ({ ...v, isFontReady: true }));
     }
-  }, [loaded, setAppStatus]);
+  }, [loaded]);
 
   return null;
 };

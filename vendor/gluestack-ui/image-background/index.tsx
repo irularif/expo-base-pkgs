@@ -6,7 +6,7 @@ import { tva } from '@gluestack-ui/nativewind-utils/tva';
 const imageBackgroundStyle = tva({});
 
 const ImageBackground = React.forwardRef<
-  React.ElementRef<typeof RNImageBackground>,
+  React.ComponentRef<typeof RNImageBackground>,
   React.ComponentProps<typeof RNImageBackground>
 >(({ className, ...props }, ref) => {
   return (

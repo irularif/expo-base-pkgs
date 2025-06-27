@@ -17,7 +17,7 @@ type ISkeletonTextProps = React.ComponentProps<typeof View> &
   };
 
 const Skeleton = forwardRef<
-  React.ElementRef<typeof Animated.View>,
+  React.ComponentRef<typeof Animated.View>,
   ISkeletonProps
 >(
   (
@@ -80,7 +80,7 @@ const Skeleton = forwardRef<
 );
 
 const SkeletonText = forwardRef<
-  React.ElementRef<typeof View>,
+  React.ComponentRef<typeof View>,
   ISkeletonTextProps
 >(
   (

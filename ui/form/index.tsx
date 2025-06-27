@@ -15,7 +15,7 @@ const Form = <Values extends FormikValues = FormikValues, ExtraProps = any>(
   props: FormikConfig<Values> & ExtraProps & { children: React.ReactNode }
 ) => {
   const { children, innerRef = noop, ...rest } = props;
-  const formRef = useRef<FormikProps<Values>>(null);
+  const formRef = useRef<FormikProps<Values>>(null!);
   const form = useFormRef(formRef);
 
   useImperativeHandle(innerRef, () => ({ ...formRef.current }), []);

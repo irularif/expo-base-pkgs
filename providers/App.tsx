@@ -20,7 +20,6 @@ export const AppProvider = ({
 }: IProvider) => {
   const { preventAutoHide = false } = config;
   const appStatus = useAppProviderState();
-  const setAppStatus = useAppProviderState.setState;
 
   const isReady = useMemo(
     () => isEmpty(find(appStatus, (v) => !v)),
@@ -33,9 +32,9 @@ export const AppProvider = ({
       if (onAppReady) {
         await onAppReady();
       }
-      setAppStatus((v) => ({ ...v, isInitReady: true }));
+      useAppProviderState.setState((v) => ({ ...v, isInitReady: true }));
     }
-  }, [appStatus, onAppReady, setAppStatus]);
+  }, [appStatus, onAppReady]);
 
   useEffect(() => {
     if (isReady && !preventAutoHide) {

@@ -3,9 +3,7 @@ import { Platform } from 'react-native';
 import { twMerge } from 'tailwind-merge';
 import { withCustomComponents } from '../../hoc/customCmponent';
 import { PageProps } from '../../types/components';
-import { KeyboardAvoidingView } from '../keyboard-avoiding-view';
-import { ScrollView } from '../scroll-view';
-import { View } from '../view';
+import { KeyboardAvoidingView, ScrollView, View } from '../react-native';
 
 const BasicPage = (props: PageProps) => {
   const {
@@ -48,6 +46,6 @@ const BasicPage = (props: PageProps) => {
 
 BasicPage.displayName = 'Page';
 
-const Page = withCustomComponents(BasicPage, 'page.Page');
+const Page = withCustomComponents(BasicPage, 'Page');
 
 export { Page };

@@ -3,10 +3,8 @@ import { TCustomComponents } from '../types/components';
 import * as custom from '@app/config/components';
 
 let components: TCustomComponents = {
-  formControl: {
-    FormControlErrorText: {
-      size: 'sm',
-    },
+  FormControlErrorText: {
+    size: 'sm',
   },
 };
 

@@ -22,8 +22,13 @@ const useBound = <TState, TUpdater extends AnyUpdater = (cb: TState) => TState>(
   const useBoundStore = <TSelected = TState>(
     selector?: (state: TState) => TSelected
   ) => useStore(store, selector);
-  Object.assign(useBoundStore, store);
-  return useBoundStore as typeof useBoundStore & Store<TState, TUpdater>;
+  Object.assign(useBoundStore, store, {
+    getState: () => store.state,
+  });
+  return useBoundStore as typeof useBoundStore &
+    Omit<Store<TState, TUpdater>, 'state'> & {
+      getState: () => TState;
+    };
 };
 
 export const store = <TState>(

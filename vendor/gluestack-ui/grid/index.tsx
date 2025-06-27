@@ -126,7 +126,7 @@ type IGridProps = ViewProps &
     };
   };
 
-const Grid = forwardRef<React.ElementRef<typeof View>, IGridProps>(
+const Grid = forwardRef<React.ComponentRef<typeof View>, IGridProps>(
   ({ className, _extra, children, ...props }, ref) => {
     const [calculatedWidth, setCalculatedWidth] = useState<number | null>(null);
 
@@ -249,7 +249,7 @@ type IGridItemProps = ViewProps &
     };
   };
 
-const GridItem = forwardRef<React.ElementRef<typeof View>, IGridItemProps>(
+const GridItem = forwardRef<React.ComponentRef<typeof View>, IGridItemProps>(
   ({ className, _extra, ...props }, ref) => {
     const [flexBasisValue, setFlexBasisValue] = useState<
       number | string | null

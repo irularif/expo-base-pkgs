@@ -1,5 +1,4 @@
-import { map } from 'lodash';
-import { Children, memo, ReactElement, ReactNode } from 'react';
+import { Children, memo, ReactElement, ReactNode, cloneElement } from 'react';
 
 interface IShow {
   children?: ReactElement | ReactElement[];
@@ -17,9 +16,9 @@ const BaseShow = (props: IShow) => {
   let otherwise: ReactNode | undefined;
 
   Children.forEach(props.children, (children) => {
-    if (children?.props.if === undefined) {
+    if ((children?.props as IShowTrue)?.if === undefined) {
       otherwise = children;
-    } else if (!when && children.props.if === true) {
+    } else if (!when && (children?.props as IShowTrue)?.if === true) {
       when = children;
     }
   });
@@ -37,8 +36,17 @@ const Show = Object.assign(memo(BaseShow), {
 interface IEach<T> {
   renderItem: (item: T, index: number) => ReactElement;
   of?: T[];
+  keyExtractor?: (item: T, index: number) => string | number;
 }
-const Each = <T extends unknown>({ renderItem, of }: IEach<T>) =>
-  Children.toArray(map(of, renderItem));
+const Each = <T extends unknown>({
+  renderItem,
+  of = [],
+  keyExtractor,
+}: IEach<T>) =>
+  of?.map((item, index) => {
+    const element = renderItem(item, index);
+    const key = keyExtractor ? keyExtractor(item, index) : index;
+    return cloneElement(element, { key });
+  }) ?? [];
 
 export { Each, Show };
