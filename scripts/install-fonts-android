@@ -1,10 +1,10 @@
 #!/bin/bash
 # install-fonts-android - fonts installation script
 
-set -e  # Exit on error
+set -euo pipefail  # Exit on error, undefined variables, and pipe failures
 
 # Get the directory where this script is located
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # Get the project root directory (two levels up from this script)
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
