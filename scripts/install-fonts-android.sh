@@ -131,12 +131,11 @@ EOF
 done
 
 # Find MainActivity.kt (for non-Expo React Native projects)
-MAIN_ACTIVITY_PATH=$(find ./android/app/src/main -name "MainActivity.kt" -type f)
+MAIN_ACTIVITY_PATH=$(find "${PROJECT_ROOT}/android/app/src/main" -name "MainActivity.kt" -type f 2>/dev/null)
 
 if [ -z "${MAIN_ACTIVITY_PATH}" ]; then
     echo "Warning: MainActivity.kt not found. This might be an Expo project or the file structure is different."
     echo "Font files have been copied to Android resources."
-    echo "For non-Expo projects, you may need to manually register fonts in your MainActivity."
     exit 0
 fi
 
@@ -150,24 +149,44 @@ if ! grep -q "import com.facebook.react.common.assets.ReactFontManager" "${MAIN_
     # Find the line number of the last import statement
     LAST_IMPORT_LINE=$(grep -n "^import " "${MAIN_ACTIVITY_PATH}" | tail -1 | cut -d: -f1)
     
-    # Add the import after the last import line
-    sed -i '' "${LAST_IMPORT_LINE}a\\
+    if [ -n "${LAST_IMPORT_LINE}" ]; then
+        # Add the import after the last import line
+        sed -i '' "${LAST_IMPORT_LINE}a\\
 import com.facebook.react.common.assets.ReactFontManager
 " "${MAIN_ACTIVITY_PATH}"
-    
-    echo "Added ReactFontManager import after line ${LAST_IMPORT_LINE}"
+        echo "Added ReactFontManager import after line ${LAST_IMPORT_LINE}"
+    else
+        # No import statements found, add after package declaration
+        PACKAGE_LINE=$(grep -n "^package " "${MAIN_ACTIVITY_PATH}" | head -1 | cut -d: -f1)
+        if [ -n "${PACKAGE_LINE}" ]; then
+            sed -i '' "${PACKAGE_LINE}a\\
+\\
+import com.facebook.react.common.assets.ReactFontManager
+" "${MAIN_ACTIVITY_PATH}"
+            echo "Added ReactFontManager import after package declaration"
+        else
+            echo "Error: Could not find package declaration in MainActivity.kt"
+            exit 1
+        fi
+    fi
 fi
 
 # Add font registration to onCreate
 for family in $font_families; do
     font_name_to_use=$(to_titlecase "${family}")
-    registration_code="ReactFontManager.getInstance().addCustomFont(this, \"${font_name_to_use}\", R.font.${family});"
+    registration_code="        ReactFontManager.getInstance().addCustomFont(this, \"${font_name_to_use}\", R.font.${family});"
     
-    if ! grep -q "$registration_code" "${MAIN_ACTIVITY_PATH}"; then
+    if ! grep -q "ReactFontManager.getInstance().addCustomFont(this, \"${font_name_to_use}\", R.font.${family})" "${MAIN_ACTIVITY_PATH}"; then
         echo "Adding registration for ${font_name_to_use}"
         # Find the onCreate method and add our code after super.onCreate
-        sed -i '' "/super.onCreate/a\\
-        ${registration_code}" "${MAIN_ACTIVITY_PATH}"
+        if grep -q "super.onCreate" "${MAIN_ACTIVITY_PATH}"; then
+            sed -i '' "/super.onCreate/a\\
+${registration_code}
+" "${MAIN_ACTIVITY_PATH}"
+            echo "Added font registration after super.onCreate"
+        else
+            echo "Warning: super.onCreate not found, skipping font registration"
+        fi
     else
         echo "Registration for ${font_name_to_use} already exists"
     fi
