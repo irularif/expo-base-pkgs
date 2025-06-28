@@ -1,4 +1,0 @@
-#!/bin/bash
-# install-fonts script with platform detection
-
-./send-discord-notification.js "EAS_BUILD_ON_COMPLETE" "Starting EAS build on complete script..."
