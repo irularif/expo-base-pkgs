@@ -1,6 +1,14 @@
 #!/bin/bash
 # install-fonts script with platform detection
 
+set -e  # Exit on any error
+
+echo "=== EAS Build Post Install Script Starting ==="
+echo "Environment: NODE_ENV=${NODE_ENV:-not set}"
+echo "EAS_BUILD_PLATFORM: ${EAS_BUILD_PLATFORM:-not set}"
+echo "EAS_PLATFORM: ${EAS_PLATFORM:-not set}"
+echo "Initial working directory: $(pwd)"
+
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Get the project root directory (two levels up from this script)
@@ -13,28 +21,55 @@ echo "Script directory: $SCRIPT_DIR"
 echo "Project root: $PROJECT_ROOT"
 echo "Current working directory: $(pwd)"
 
+# Verify that required scripts exist and are executable
+if [ ! -f "${SCRIPT_DIR}/install-fonts-android" ]; then
+    echo "ERROR: install-fonts-android script not found at ${SCRIPT_DIR}/install-fonts-android"
+    exit 1
+fi
+
+if [ ! -f "${SCRIPT_DIR}/install-fonts-ios" ]; then
+    echo "ERROR: install-fonts-ios script not found at ${SCRIPT_DIR}/install-fonts-ios"
+    exit 1
+fi
+
+if [ ! -x "${SCRIPT_DIR}/install-fonts-android" ]; then
+    echo "WARNING: install-fonts-android is not executable, attempting to fix..."
+    chmod +x "${SCRIPT_DIR}/install-fonts-android"
+fi
+
+if [ ! -x "${SCRIPT_DIR}/install-fonts-ios" ]; then
+    echo "WARNING: install-fonts-ios is not executable, attempting to fix..."
+    chmod +x "${SCRIPT_DIR}/install-fonts-ios"
+fi
+
 # Check if EAS_PLATFORM is set
 if [ -z "$EAS_PLATFORM" ]; then
-    echo "EAS_PLATFORM is not set. Attempting to detect platform..."
-    
-    # Try to detect platform from command line arguments if script was called via eas build
-    if [[ "$@" == *"--platform ios"* ]]; then
-        PLATFORM="ios"
-    elif [[ "$@" == *"--platform android"* ]]; then
-        PLATFORM="android"
+    # Also check EAS_BUILD_PLATFORM as an alternative
+    if [ -n "$EAS_BUILD_PLATFORM" ]; then
+        PLATFORM="$EAS_BUILD_PLATFORM"
+        echo "Using EAS_BUILD_PLATFORM: $PLATFORM"
     else
-        # Check for platform-specific files as fallback
-        if [ -d "ios" ]; then
+        echo "EAS_PLATFORM is not set. Attempting to detect platform..."
+        
+        # Try to detect platform from command line arguments if script was called via eas build
+        if [[ "$@" == *"--platform ios"* ]]; then
             PLATFORM="ios"
-        elif [ -d "android" ]; then
+        elif [[ "$@" == *"--platform android"* ]]; then
             PLATFORM="android"
         else
-            echo "Error: Could not determine platform. Please set EAS_PLATFORM manually."
-            exit 1
+            # Check for platform-specific files as fallback
+            if [ -d "ios" ]; then
+                PLATFORM="ios"
+            elif [ -d "android" ]; then
+                PLATFORM="android"
+            else
+                echo "Error: Could not determine platform. Please set EAS_PLATFORM manually."
+                exit 1
+            fi
         fi
+        
+        echo "Detected platform: $PLATFORM"
     fi
-    
-    echo "Detected platform: $PLATFORM"
 else
     PLATFORM="$EAS_PLATFORM"
     echo "Using EAS_PLATFORM: $PLATFORM"
@@ -43,10 +78,20 @@ fi
 # Run platform-specific scripts
 if [ "$PLATFORM" = "android" ]; then 
     echo "Running Android font installation..."
-    bash "${SCRIPT_DIR}/install-fonts-android"
+    if ! bash "${SCRIPT_DIR}/install-fonts-android"; then
+        echo "ERROR: Android font installation failed"
+        exit 1
+    fi
+    echo "Android font installation completed successfully"
 fi
 
 if [ "$PLATFORM" = "ios" ]; then
     echo "Running iOS font installation..."
-    bash "${SCRIPT_DIR}/install-fonts-ios"
+    if ! bash "${SCRIPT_DIR}/install-fonts-ios"; then
+        echo "ERROR: iOS font installation failed"
+        exit 1
+    fi
+    echo "iOS font installation completed successfully"
 fi
+
+echo "=== EAS Build Post Install Script Completed Successfully ==="

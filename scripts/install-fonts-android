@@ -125,12 +125,22 @@ EOF
     fi
 done
 
-# Find MainActivity.kt
+# Check if this is an Expo project (doesn't need MainActivity.kt modification)
+if [ -f "./app.config.ts" ] || [ -f "./app.config.js" ] || [ -f "./app.json" ]; then
+    echo "Detected Expo project - MainActivity.kt modification not required"
+    echo "Fonts have been installed to Android resources and are ready for use"
+    echo "Font installation completed successfully"
+    exit 0
+fi
+
+# Find MainActivity.kt (for non-Expo React Native projects)
 MAIN_ACTIVITY_PATH=$(find ./android/app/src/main -name "MainActivity.kt" -type f)
 
 if [ -z "${MAIN_ACTIVITY_PATH}" ]; then
-    echo "Error: MainActivity.kt not found. Font registration code was not added."
-    exit 1
+    echo "Warning: MainActivity.kt not found. This might be an Expo project or the file structure is different."
+    echo "Font files have been copied to Android resources."
+    echo "For non-Expo projects, you may need to manually register fonts in your MainActivity."
+    exit 0
 fi
 
 echo "Found MainActivity.kt at ${MAIN_ACTIVITY_PATH}"
