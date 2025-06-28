@@ -32,7 +32,7 @@ const BasicPage = (props: PageProps) => {
         className={twMerge('flex-1', className)}
         // @ts-ignore
         contentContainerClassName={twMerge(
-          'flex-grow pt-safe pb-safe',
+          'flex-grow pt-safe ios:pb-safe android:pb-4',
           !!header && '!pt-0',
           contentContainerClassName
         )}
