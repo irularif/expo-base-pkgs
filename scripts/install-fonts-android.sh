@@ -151,18 +151,31 @@ if ! grep -q "import com.facebook.react.common.assets.ReactFontManager" "${MAIN_
     
     if [ -n "${LAST_IMPORT_LINE}" ]; then
         # Add the import after the last import line
-        sed -i '' "${LAST_IMPORT_LINE}a\\
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            sed -i '' "${LAST_IMPORT_LINE}a\\
 import com.facebook.react.common.assets.ReactFontManager
 " "${MAIN_ACTIVITY_PATH}"
+        else
+            sed -i "${LAST_IMPORT_LINE}a\\
+import com.facebook.react.common.assets.ReactFontManager
+" "${MAIN_ACTIVITY_PATH}"
+        fi
         echo "Added ReactFontManager import after line ${LAST_IMPORT_LINE}"
     else
         # No import statements found, add after package declaration
         PACKAGE_LINE=$(grep -n "^package " "${MAIN_ACTIVITY_PATH}" | head -1 | cut -d: -f1)
         if [ -n "${PACKAGE_LINE}" ]; then
-            sed -i '' "${PACKAGE_LINE}a\\
+            if [[ "$OSTYPE" == "darwin"* ]]; then
+                sed -i '' "${PACKAGE_LINE}a\\
 \\
 import com.facebook.react.common.assets.ReactFontManager
 " "${MAIN_ACTIVITY_PATH}"
+            else
+                sed -i "${PACKAGE_LINE}a\\
+\\
+import com.facebook.react.common.assets.ReactFontManager
+" "${MAIN_ACTIVITY_PATH}"
+            fi
             echo "Added ReactFontManager import after package declaration"
         else
             echo "Error: Could not find package declaration in MainActivity.kt"
@@ -180,9 +193,15 @@ for family in $font_families; do
         echo "Adding registration for ${font_name_to_use}"
         # Find the onCreate method and add our code after super.onCreate
         if grep -q "super.onCreate" "${MAIN_ACTIVITY_PATH}"; then
-            sed -i '' "/super.onCreate/a\\
+            if [[ "$OSTYPE" == "darwin"* ]]; then
+                sed -i '' "/super.onCreate/a\\
 ${registration_code}
 " "${MAIN_ACTIVITY_PATH}"
+            else
+                sed -i "/super.onCreate/a\\
+${registration_code}
+" "${MAIN_ACTIVITY_PATH}"
+            fi
             echo "Added font registration after super.onCreate"
         else
             echo "Warning: super.onCreate not found, skipping font registration"
