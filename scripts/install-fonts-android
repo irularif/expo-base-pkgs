@@ -3,9 +3,14 @@
 
 set -e  # Exit on error
 
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Get the project root directory (two levels up from this script)
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}" && pwd)"
+
 # Define paths relative to project root
-FONTS_SOURCE_DIR="./app/assets/fonts"
-ANDROID_RES_DIR="./android/app/src/main/res"
+FONTS_SOURCE_DIR="${PROJECT_ROOT}/app/assets/fonts"
+ANDROID_RES_DIR="${PROJECT_ROOT}/android/app/src/main/res"
 ANDROID_FONTS_DIR="${ANDROID_RES_DIR}/font"
 
 echo "Starting font installation process..."
@@ -124,14 +129,6 @@ EOF
         echo "  Created font family XML: ${android_family}.xml"
     fi
 done
-
-# Check if this is an Expo project (doesn't need MainActivity.kt modification)
-if [ -f "./app.config.ts" ] || [ -f "./app.config.js" ] || [ -f "./app.json" ]; then
-    echo "Detected Expo project - MainActivity.kt modification not required"
-    echo "Fonts have been installed to Android resources and are ready for use"
-    echo "Font installation completed successfully"
-    exit 0
-fi
 
 # Find MainActivity.kt (for non-Expo React Native projects)
 MAIN_ACTIVITY_PATH=$(find ./android/app/src/main -name "MainActivity.kt" -type f)
