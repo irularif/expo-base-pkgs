@@ -12,6 +12,7 @@ import type {
 } from 'react-native';
 import type { TGluestackUIProps } from './gluestack-ui';
 import { DeepPartial } from './generic';
+import { NavigationBarPosition } from 'expo-navigation-bar';
 
 export interface PageProps extends ScrollViewProps {
   children: ReactNode;
@@ -22,6 +23,8 @@ export interface PageProps extends ScrollViewProps {
   header?: ReactNode;
   footer?: ReactNode;
   disableScroll?: boolean;
+  navigationBarPosition?: NavigationBarPosition;
+  navigationBarBackgroundColor?: string;
 }
 
 export type TComponents = TGluestackUIProps & {

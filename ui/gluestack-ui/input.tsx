@@ -5,12 +5,69 @@ import {
   forwardRef,
   useCallback,
   useContext,
+  useState,
 } from 'react';
-import { FormControlContext } from '../../context/form';
+import {
+  FormControlContext,
+  InputSecureTextEntryContext,
+} from '../../context/form';
 import { groupWithComponentImport } from '../../hoc/customCmponent';
 import { useField, useRegisterInputRef } from '../../hooks/useForm';
 import { TGluestackUI } from '../../types/gluestack-ui';
 import * as components from '../../vendor/gluestack-ui/input';
+import { EyeIcon, EyeOffIcon } from 'lucide-react-native';
+
+const withInput = (Component: TGluestackUI['Input']) => {
+  const WithInput = forwardRef<
+    ComponentRef<typeof Component>,
+    ComponentProps<typeof Component> & {
+      secureTextEntry?: boolean;
+    }
+  >((props, ref) => {
+    const {
+      children,
+      secureTextEntry: defaultSecureTextEntry = false,
+      ...restProps
+    } = props;
+    const [secureTextEntry, setSecureTextEntry] = useState<boolean>(
+      defaultSecureTextEntry
+    );
+
+    return (
+      <InputSecureTextEntryContext value={secureTextEntry}>
+        {createElement(
+          Component,
+          {
+            ...restProps,
+            ref,
+          },
+          <>
+            {children}
+            {defaultSecureTextEntry && (
+              <InputSlot
+                className="pr-3"
+                onPress={() => {
+                  setSecureTextEntry((prev) => !prev);
+                }}
+                onStartShouldSetResponder={() => true}
+                onTouchEnd={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <InputIcon as={secureTextEntry ? EyeOffIcon : EyeIcon} />
+              </InputSlot>
+            )}
+          </>
+        )}
+      </InputSecureTextEntryContext>
+    );
+  });
+
+  const componentName = Component.displayName || Component.name || 'Input';
+  WithInput.displayName = `withInput(${componentName})`;
+
+  return WithInput;
+};
 
 const withInputField = (Component: TGluestackUI['InputField']) => {
   const WithInputField = forwardRef<
@@ -21,6 +78,7 @@ const withInputField = (Component: TGluestackUI['InputField']) => {
     const name = useContext(FormControlContext) ?? '';
     const { setRef, nextField } = useRegisterInputRef(name);
     const { field, helpers } = useField(name);
+    const isSecure = useContext(InputSecureTextEntryContext) ?? false;
 
     const _onChangeText = useCallback(
       (text: any) => {
@@ -36,6 +94,7 @@ const withInputField = (Component: TGluestackUI['InputField']) => {
       {
         onSubmitEditing: nextField,
         value: field?.value,
+        secureTextEntry: isSecure,
         ...restProps,
         onChangeText: _onChangeText,
         ref: setRef(ref),
@@ -53,6 +112,7 @@ const withInputField = (Component: TGluestackUI['InputField']) => {
 const enhancedComponents = {
   ...components,
   InputField: withInputField(components.InputField),
+  Input: withInput(components.Input),
 };
 
 const customComponents = groupWithComponentImport(enhancedComponents);

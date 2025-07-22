@@ -21,11 +21,11 @@ const Form = <Values extends FormikValues = FormikValues, ExtraProps = any>(
   useImperativeHandle(innerRef, () => ({ ...formRef.current }), []);
 
   return (
-    <FormContext.Provider value={form}>
+    <FormContext value={form}>
       <Formik innerRef={formRef} {...rest}>
         <>{children}</>
       </Formik>
-    </FormContext.Provider>
+    </FormContext>
   );
 };
 

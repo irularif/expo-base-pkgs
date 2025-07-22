@@ -6,6 +6,12 @@ let components: TCustomComponents = {
   FormControlErrorText: {
     size: 'sm',
   },
+  Toast: {
+    className: 'mb-safe',
+  },
+  Input: {
+    className: 'items-center',
+  },
 };
 
 try {

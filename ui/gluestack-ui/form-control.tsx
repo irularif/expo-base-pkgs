@@ -24,13 +24,13 @@ const withFormControl = (Component: TGluestackUI['FormControl']) => {
     const isInvalid = useMemo(() => meta?.touched && !!meta?.error, [meta]);
 
     return (
-      <FormControlContext.Provider value={name}>
+      <FormControlContext value={name}>
         {createElement(Component, {
           isInvalid,
           ...rest,
           ref,
         })}
-      </FormControlContext.Provider>
+      </FormControlContext>
     );
   });
 

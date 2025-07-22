@@ -336,11 +336,12 @@ const ButtonText = React.forwardRef<
 const ButtonSpinner = UIButton.Spinner;
 
 type IButtonIcon = React.ComponentPropsWithoutRef<typeof UIButton.Icon> &
-  VariantProps<typeof buttonIconStyle> & {
+  Omit<VariantProps<typeof buttonIconStyle>, 'size'> & {
     className?: string | undefined;
     as?: React.ElementType;
     height?: number;
     width?: number;
+    size?: VariantProps<typeof buttonIconStyle>['size'] | number;
   };
 
 const ButtonIcon = React.forwardRef<

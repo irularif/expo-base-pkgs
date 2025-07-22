@@ -35,7 +35,7 @@ const Show = Object.assign(memo(BaseShow), {
 
 interface IEach<T> {
   renderItem: (item: T, index: number) => ReactElement;
-  of?: T[];
+  of?: T[] | readonly T[];
   keyExtractor?: (item: T, index: number) => string | number;
 }
 const Each = <T extends unknown>({
