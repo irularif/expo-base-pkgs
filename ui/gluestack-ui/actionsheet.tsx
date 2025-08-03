@@ -1,4 +1,4 @@
-import { groupWithComponentImport } from '../../hoc/customCmponent';
+import { groupWithComponentImport } from '../../hoc/customComponent';
 import * as actionsheet from '../../vendor/gluestack-ui/actionsheet';
 
 // Set display names

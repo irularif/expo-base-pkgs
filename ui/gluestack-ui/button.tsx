@@ -10,7 +10,7 @@ import {
 } from 'react';
 import { GestureResponderEvent } from 'react-native';
 import colors from 'tailwindcss/colors';
-import { groupWithComponentImport } from '../../hoc/customCmponent';
+import { groupWithComponentImport } from '../../hoc/customComponent';
 import { TGluestackUI, TGluestackUIProps } from '../../types/gluestack-ui';
 import * as components from '../../vendor/gluestack-ui/button';
 

@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { EmitterSubscription, Keyboard, Platform } from 'react-native';
 import { twMerge } from 'tailwind-merge';
-import { withCustomComponents } from '../../hoc/customCmponent';
+import { withCustomComponents } from '../../hoc/customComponent';
 import { PageProps } from '../../types/components';
 import { KeyboardAvoidingView, ScrollView, View } from '../react-native';
 import * as NavigationBar from 'expo-navigation-bar';

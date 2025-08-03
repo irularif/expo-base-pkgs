@@ -1,5 +1,5 @@
 import * as components from '../../vendor/gluestack-ui/center';
-import { groupWithComponentImport } from '../../hoc/customCmponent';
+import { groupWithComponentImport } from '../../hoc/customComponent';
 
 const customComponents = groupWithComponentImport(components);
 

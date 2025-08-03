@@ -1,5 +1,5 @@
 import * as components from '../../vendor/gluestack-ui/icon';
-import { groupWithComponentImport } from '../../hoc/customCmponent';
+import { groupWithComponentImport } from '../../hoc/customComponent';
 
 const { createIcon, ...iconComponents } = components;
 const customComponents = groupWithComponentImport(iconComponents);

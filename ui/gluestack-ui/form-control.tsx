@@ -7,7 +7,7 @@ import {
   useMemo,
 } from 'react';
 import { FormControlContext } from '../../context/form';
-import { groupWithComponentImport } from '../../hoc/customCmponent';
+import { groupWithComponentImport } from '../../hoc/customComponent';
 import { useField } from '../../hooks/useForm';
 import { TGluestackUI } from '../../types/gluestack-ui';
 import * as components from '../../vendor/gluestack-ui/form-control';

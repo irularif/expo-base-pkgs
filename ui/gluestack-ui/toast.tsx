@@ -1,5 +1,5 @@
 import * as components from '../../vendor/gluestack-ui/toast';
-import { groupWithComponentImport } from '../../hoc/customCmponent';
+import { groupWithComponentImport } from '../../hoc/customComponent';
 
 const { useToast, ...componentOnlyExports } = components;
 const customComponents = groupWithComponentImport(componentOnlyExports);

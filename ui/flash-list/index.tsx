@@ -2,7 +2,7 @@ import {
   FlashList as RNFlashList,
   MasonryFlashList as RNMasonryFlashList,
 } from '@shopify/flash-list';
-import { groupWithComponentImport } from '../../hoc/customCmponent';
+import { groupWithComponentImport } from '../../hoc/customComponent';
 import { cssInterop } from 'react-native-css-interop';
 
 cssInterop(RNFlashList, {

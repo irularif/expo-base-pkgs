@@ -1,4 +1,4 @@
-import { groupWithComponentImport } from '../../hoc/customCmponent';
+import { groupWithComponentImport } from '../../hoc/customComponent';
 import {
   RefreshControl as RNRefreshControl,
   VirtualizedList as RNVirtualizedList,

@@ -1,4 +1,4 @@
-import { groupWithComponentImport } from '../../hoc/customCmponent';
+import { groupWithComponentImport } from '../../hoc/customComponent';
 import * as accordion from '../../vendor/gluestack-ui/accordion';
 
 // Type-safe component grouping

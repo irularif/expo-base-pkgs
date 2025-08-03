@@ -1,5 +1,5 @@
 import * as components from '../../vendor/gluestack-ui/checkbox';
-import { groupWithComponentImport } from '../../hoc/customCmponent';
+import { groupWithComponentImport } from '../../hoc/customComponent';
 
 const customComponents = groupWithComponentImport(components);
 

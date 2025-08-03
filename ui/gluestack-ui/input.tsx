@@ -11,7 +11,7 @@ import {
   FormControlContext,
   InputSecureTextEntryContext,
 } from '../../context/form';
-import { groupWithComponentImport } from '../../hoc/customCmponent';
+import { groupWithComponentImport } from '../../hoc/customComponent';
 import { useField, useRegisterInputRef } from '../../hooks/useForm';
 import { TGluestackUI } from '../../types/gluestack-ui';
 import * as components from '../../vendor/gluestack-ui/input';
